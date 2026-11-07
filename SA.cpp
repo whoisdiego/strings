@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include "memprof.h"
 using namespace std;
 using ll = long long;
 
@@ -103,13 +104,26 @@ vector<int> suffix_array(const string& s){
 int main(){
   string booksname = "frank.txt";
 
-  string libro = getBook(booksname);
+  string libro;
+  {
+    memprof::Etapa e("leer archivo");
+    libro = getBook(booksname);
+  }
 
-  vector<int> SA = suffix_array(libro);
+  vector<int> SA;
+  {
+    memprof::Etapa e("suffix_array");
+    SA = suffix_array(libro);
+  }
 
   string palabra = "monster";
-  pair<ll, ll> r = buscar(libro, SA, palabra);
-  cout << "Apariciones de " << palabra << ": " << r.second - r.first << "\n";
-  for (ll i = r.first; i < r.second && i < r.first + 10; i++) cout << SA[i] << " ";
-  cout << "\n";
+  {
+    memprof::Etapa e("buscar");
+    pair<ll, ll> r = buscar(libro, SA, palabra);
+    cout << "Apariciones de " << palabra << ": " << r.second - r.first << "\n";
+    for (ll i = r.first; i < r.second && i < r.first + 10; i++) cout << SA[i] << " ";
+    cout << "\n";
+  }
+
+  memprof::resumen();
 }

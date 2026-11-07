@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "memprof.h"
 using namespace std;
 using ll = long long;
 
@@ -233,15 +234,32 @@ vector<int> aVector(const string& s) {
 }
 
 int main() {
-    string libro = getBook("frank.txt");
+    string libro;
+    {
+      memprof::Etapa e("leer archivo");
+      libro = getBook("frank.txt");
+    }
 
-    vector<int> T = aVector(libro);
+    vector<int> T;
+    {
+      memprof::Etapa e("string a vector");
+      T = aVector(libro);
+    }
 
-    vector<int> SA = sais(T);
+    vector<int> SA;
+    {
+      memprof::Etapa e("sais");
+      SA = sais(T);
+    }
 
     string palabra = "monster";
-    pair<ll, ll> r = buscar(libro, SA, palabra);
-    cout << "Apariciones de " << palabra << ": " << r.second - r.first << "\n";
-    for (ll i = r.first; i < r.second && i < r.first + 10; i++) cout << SA[i] << " ";
-    cout << "\n";
+    {
+      memprof::Etapa e("buscar");
+      pair<ll, ll> r = buscar(libro, SA, palabra);
+      cout << "Apariciones de " << palabra << ": " << r.second - r.first << "\n";
+      for (ll i = r.first; i < r.second && i < r.first + 10; i++) cout << SA[i] << " ";
+      cout << "\n";
+    }
+
+    memprof::resumen();
 }
