@@ -36,7 +36,7 @@ vector<int> suffix_array(string s){
   };
 
   for(int i = 0; i<n; i++){
-    substr_rank.push_back(SubstrRank((int)s[i], (i + 1 == n ? (int)s[i+1]: 0), i));
+    substr_rank.push_back(SubstrRank((int)s[i], (i + 1 < n ? (int)s[i+1]: 0), i));
   }
 
   sort(substr_rank.begin(), substr_rank.end(), comp);
